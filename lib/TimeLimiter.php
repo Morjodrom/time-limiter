@@ -1,84 +1,67 @@
 <?php
 
-namespace LoopLimiter;
+namespace timelimiter;
 
-
-class TimeLimiter implements \Iterator
+/**
+ * Class TimeLimiter
+ *
+ * @package timelimiter
+ * @author Morjodrom
+ */
+class TimeLimiter
 {
+    /**
+     * An opinionated amount of seconds to stop execution safely
+     */
     const DEFAULT_TIME_UP_SECONDS = 3;
 
     /**
      * @var int - timestamp threshold to stop
      */
-    private $timesUp;
+    private $timeout;
 
 
     /**
-     * LoopManager constructor.
+     * TimeLimiter constructor.
      *
-     * @param int      $limitSeconds - seconds to process
-     * @param int      $timeUpSeconds - seconds to stop before the end
-     * @param int|null $startTimestamp - $_SERVER['REQUEST_TIME'] by default
+     * Can be used with ``ini_get('max_execution_time')`` for the first parameter.
+     *
+     * @param int      $limitSeconds - seconds to process. 0 equals to INF
+     * @param int      $timeUpSeconds - seconds to stop preliminary before the timeout
+     * @param int|null $startTimestamp - $_SERVER['REQUEST_TIME'] is used by default
+     *
+     * @see INF
      */
-    public function __construct(int $limitSeconds, int $timeUpSeconds = self::DEFAULT_TIME_UP_SECONDS, int $startTimestamp = null) {
+    public function __construct($limitSeconds, $timeUpSeconds = self::DEFAULT_TIME_UP_SECONDS, $startTimestamp = null) {
+
         if($limitSeconds === 0) {
-            $this->timesUp = INF;
+            $this->timeout = INF;
         }
         else {
-            $startTimestamp = $startTimestamp ?? (int) $_SERVER['REQUEST_TIME'];
-            $this->timesUp = $startTimestamp - $timeUpSeconds + $limitSeconds;
+            $startTimestamp = $startTimestamp ?: (int) $_SERVER['REQUEST_TIME'];
+            $this->timeout = $startTimestamp - $timeUpSeconds + $limitSeconds;
         }
     }
 
 
     /**
-     * Return current time left
-     * @return float
+     * Return seconds left
+     *
+     * @return int|float
      */
-    public function current(): float {
-        if($this->timesUp === INF){
-            return $this->timesUp;
+    public function current() {
+        if($this->timeout === INF){
+            return $this->timeout;
         }
         $now = time();
-        return $this->timesUp - $now;
+        return $this->timeout - $now;
     }
-
-
-
-
 
     /**
      * Checks if there is time to process left
      * @return boolean
      */
-    public function valid(): bool {
+    public function valid() {
         return $this->current() > 0;
-    }
-
-    /**
-     * Move forward to next element
-     * @return void Any returned value is ignored.
-     */
-    public function next()
-    {
-        // TODO: Implement next() method.
-    }
-
-    /**
-     * Return the key of the current element
-     * @return mixed scalar on success, or null on failure.
-     */
-    public function key()
-    {
-        // TODO: Implement key() method.
-    }
-
-    /**
-     * Rewind the Iterator to the first element
-     * @return void Any returned value is ignored.
-     */
-    public function rewind()
-    {
-        // TODO: Implement rewind() method.
     }
 }

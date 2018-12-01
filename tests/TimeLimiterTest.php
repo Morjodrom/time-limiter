@@ -1,9 +1,10 @@
 <?php
 
-namespace LoopLimiter;
+namespace timelimiter;
 
 /**
  * Class TimeLimiterTest
+ *
  * @covers TimeLimiter
  */
 class TimeLimiterTest extends \PHPUnit\Framework\TestCase
@@ -11,13 +12,16 @@ class TimeLimiterTest extends \PHPUnit\Framework\TestCase
 
 	/**
 	 * @covers TimeLimiter::valid()
+     * @covers \timelimiter\TimeLimiter::current
 	 */
 	public function testCurrent() {
 		$limit = 6;
-		$safeTime = TimeLimiter::DEFAULT_TIME_UP_SECONDS;
-		$loopManager = new TimeLimiter($limit, $safeTime, time());
-		$left = $loopManager->current();
-		$this->assertGreaterThanOrEqual($limit - $safeTime, $left);
+		$safeTime = 3;
+        $preliminaryStopTime = $limit - $safeTime;
+		$timeLimiter = new TimeLimiter($limit, $safeTime, time());
+		$secondsLeft = $timeLimiter->current();
+        $this->assertInternalType('int', $secondsLeft);
+		$this->assertGreaterThanOrEqual($preliminaryStopTime, $secondsLeft, 'There must be time left before the actual timeout');
 	}
 
 	/**
@@ -26,16 +30,26 @@ class TimeLimiterTest extends \PHPUnit\Framework\TestCase
 	public function testValid() {
 		$limit = 2;
 		$safeTime = 1;
-		$loopManager = new TimeLimiter($limit, $safeTime, time());
-		$this->assertTrue($loopManager->valid(), 'Must be valid right the moment after creation');
+		$timeLimiter = new TimeLimiter($limit, $safeTime, time());
+        $initialCheck = $timeLimiter->current();
+        $this->assertGreaterThan(0, $initialCheck, 'Before timeout there must be time to process');
+		$this->assertTrue($timeLimiter->valid(), 'Must be valid right the moment after creation');
 		sleep($limit - $safeTime);
-		$this->assertFalse($loopManager->valid(), 'Must invalidate after time spent');
+        $lateCheck = $timeLimiter->current();
+        $this->assertLessThanOrEqual(0, $lateCheck, 'After timeout there must be only time exceeded');
+		$this->assertFalse($timeLimiter->valid(), 'Must be invalid after time spent');
 	}
 
+    /**
+     * @covers \timelimiter\TimeLimiter::current
+     * @covers \timelimiter\TimeLimiter::valid
+     * @covers \timelimiter\TimeLimiter::__construct
+     */
 	public function testValidInfinity() {
-		$loopManager = new TimeLimiter(0);
-		$this->assertTrue($loopManager->valid());
-		$this->assertSame(INF, $loopManager->current());
+	    $limitlessExecutionTimeParam = 0;
+		$timeLimiter = new TimeLimiter($limitlessExecutionTimeParam);
+		$this->assertTrue($timeLimiter->valid());
+		$this->assertSame(INF, $timeLimiter->current(), '');
 	}
 
 }

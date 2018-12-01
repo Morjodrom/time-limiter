@@ -1,18 +1,19 @@
 {
-    "name": "morjodrom/loop-limiter",
-    "description": "A class to provider time limited loop",
+    "name": "morjodrom/time-limiter",
+    "description": "A class helping to track time left to perform a php script",
     "type": "library",
-    "license": "wtfpl",
+    "license": "MIT",
     "minimum-stability": "stable",
     "require": {
-        "php": ">7.0.0"
+        "php": ">=5.3"
     },
     "require-dev": {
+        "php": ">=7",
         "phpunit/phpunit": "7"
     },
     "autoload": {
         "psr-4": {
-            "LoopLimiter\\": "lib/"
+            "timelimiter\\": "lib/"
         }
     }
 }
