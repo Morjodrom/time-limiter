@@ -1,11 +1,20 @@
 {
     "name": "morjodrom/time-limiter",
     "description": "A class helping to track time left to perform a php script",
+    "keywords": ["timeout", "max_execution_time", "limit"],
+    "homepage": "https://github.com/Morjodrom/time-limiter",
+    "readme": "README.md",
+    "time": "2018-01-12",
     "type": "library",
     "license": "MIT",
+    "version": "1.0.0",
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.3"
+    },
+    "support": {
+        "issues": "https://github.com/phar-io/manifest/issues",
+        "docs": "https://github.com/Morjodrom/time-limiter"
     },
     "require-dev": {
         "php": ">=7",
