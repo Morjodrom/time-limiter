@@ -18,9 +18,19 @@ class TimeLimiter implements \Iterator
     const DEFAULT_TIME_UP_SECONDS = 3;
 
     /**
-     * @var int - timestamp threshold to stop
+     * @var int
      */
-    protected $timeout;
+    protected $startTimestamp;
+
+    /**
+     * @var int
+     */
+    protected $preliminaryTimeout;
+
+    /**
+     * @var int
+     */
+    protected $limitSeconds;
 
 
     /**
@@ -64,16 +74,11 @@ class TimeLimiter implements \Iterator
      *
      * @see INF
      */
-    public function __construct(int $limitSeconds, int $preliminaryTimeout = self::DEFAULT_TIME_UP_SECONDS, int $startTimestamp = null)
+    public function __construct(int $limitSeconds = INF, int $preliminaryTimeout = self::DEFAULT_TIME_UP_SECONDS, int $startTimestamp = null)
     {
-
-        if($limitSeconds === 0) {
-            $this->timeout = INF;
-        }
-        else {
-            $startTimestamp = $startTimestamp ?: $_SERVER['REQUEST_TIME'];
-            $this->timeout = $startTimestamp - $preliminaryTimeout + $limitSeconds;
-        }
+        $this->startTimestamp = $startTimestamp ?: $_SERVER['REQUEST_TIME'];
+        $this->preliminaryTimeout = $preliminaryTimeout;
+        $this->limitSeconds = $limitSeconds > 0 ? $limitSeconds : INF;
     }
 
 
@@ -84,11 +89,7 @@ class TimeLimiter implements \Iterator
      */
     public function current()
     {
-        if($this->timeout === INF){
-            return $this->timeout;
-        }
-        $now = time();
-        return $this->timeout - $now;
+        return $this->startTimestamp - $this->preliminaryTimeout + $this->limitSeconds - time();
     }
 
     /**
