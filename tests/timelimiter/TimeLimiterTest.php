@@ -35,8 +35,8 @@ class TimeLimiterTest extends \PHPUnit\Framework\TestCase
 		$this->assertTrue($timeLimiter->valid(), 'Must be valid right the moment after creation');
 		sleep($limit - $safeTime);
         $lateCheck = $timeLimiter->current();
-        $this->assertLessThanOrEqual(0, $lateCheck, 'After timeout there must be only time exceeded');
-		$this->assertFalse($timeLimiter->valid(), 'Must be invalid after time spent');
+        $this->assertGreaterThan(0, $lateCheck, 'After timeout there must be time left');
+		$this->assertFalse($timeLimiter->valid(), 'But any further operation must be invalid');
 	}
 
     /**

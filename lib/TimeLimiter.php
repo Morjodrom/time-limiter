@@ -57,7 +57,7 @@ class TimeLimiter implements \Iterator
      */
     public function current()
     {
-        return $this->startTimestamp - $this->preliminaryTimeoutSec + $this->limitSeconds - time();
+        return $this->startTimestamp + $this->limitSeconds - time();
     }
 
     /**
@@ -66,7 +66,7 @@ class TimeLimiter implements \Iterator
      */
     public function valid(): bool
     {
-        return $this->current() > 0;
+        return $this->current() - $this->preliminaryTimeoutSec > 0;
     }
 
     public function next()
