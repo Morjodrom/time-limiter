@@ -1,6 +1,12 @@
 <?php
 
+/**
+ * @noinspection AccessModifierPresentedInspection
+ */
+
 namespace timelimiter;
+
+use ReturnTypeWillChange;
 
 /**
  * Class TimeLimiter
@@ -49,7 +55,7 @@ class TimeLimiter implements \Iterator
      *
      * @param int $maxExecutionTimeSec - maximum seconds to execute. 0 defaults INF. Can be used with ``ini_get('max_execution_time')``.
      * @param float $preliminaryTimeoutSec - longest possible iteration length to prevent a shutdown during the last iteration. The value is rounded up
-     * @param int|null $startTimestamp - timestamp of the iteration start. Defaults to $_SERVER['REQUEST_TIME']
+     * @param int $startTimestamp - timestamp of the iteration start. Defaults to $_SERVER['REQUEST_TIME']
      *
      * @see INF
      */
@@ -63,9 +69,10 @@ class TimeLimiter implements \Iterator
     /**
      * Return seconds left
      *
-     * @return int|float
+     * @return float
      */
-    public function current()
+    #[ReturnTypeWillChange]
+    public function current(): float
     {
         return $this->startTimestamp + $this->maxExecutionTimeSec - time();
     }
@@ -79,6 +86,7 @@ class TimeLimiter implements \Iterator
         return $this->current() - $this->preliminaryTimeoutSec > 0;
     }
 
+    #[ReturnTypeWillChange]
     public function next()
     {
         $iterationDuration = time() - $this->lastExecutionTime;
@@ -90,11 +98,12 @@ class TimeLimiter implements \Iterator
         $this->lastExecutionTime = time();
     }
 
-    public function key()
+    public function key(): int
     {
         return time();
     }
 
+    #[ReturnTypeWillChange]
     public function rewind()
     {
         $this->lastExecutionTime = time();
