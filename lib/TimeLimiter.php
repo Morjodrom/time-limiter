@@ -27,11 +27,11 @@ class TimeLimiter
      * TimeLimiter constructor.
      *
      *
-     * @param int      $limitSeconds - seconds to process. 0 equals to INF.
+     * @param int $limitSeconds - seconds to process. 0 equals to INF.
      * Can be used with ``ini_get('max_execution_time')`` for the first parameter.
      * <b>Note!</b> You can freely pass any time just to limit the script execution
      * e.g. to send progress data to the client.
-     * @param int      $preliminaryTimeout - seconds to stop preliminary before the timeout.
+     * @param int $preliminaryTimeout - seconds to stop preliminary before the timeout.
      * ``$preliminaryTimeout`` must be a bit greater that the longest operation you perform in a loop
      * to prevent script fatal error with a timeout. E.g, a typical share hosting limits:
      * - max_execution_time is 30 seconds
@@ -64,13 +64,13 @@ class TimeLimiter
      *
      * @see INF
      */
-    public function __construct($limitSeconds, $preliminaryTimeout = self::DEFAULT_TIME_UP_SECONDS, $startTimestamp = null) {
-
+    public function __construct(int $limitSeconds, int $preliminaryTimeout = self::DEFAULT_TIME_UP_SECONDS, int $startTimestamp = null)
+    {
         if($limitSeconds === 0) {
             $this->timeout = INF;
         }
         else {
-            $startTimestamp = $startTimestamp ?: (int) $_SERVER['REQUEST_TIME'];
+            $startTimestamp = $startTimestamp ?: $_SERVER['REQUEST_TIME'];
             $this->timeout = $startTimestamp - $preliminaryTimeout + $limitSeconds;
         }
     }
@@ -81,7 +81,8 @@ class TimeLimiter
      *
      * @return int|float
      */
-    public function current() {
+    public function current()
+    {
         if($this->timeout === INF){
             return $this->timeout;
         }
@@ -93,7 +94,8 @@ class TimeLimiter
      * Checks if there is time to process left
      * @return boolean
      */
-    public function valid() {
+    public function valid(): bool
+    {
         return $this->current() > 0;
     }
 }
