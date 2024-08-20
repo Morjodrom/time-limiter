@@ -5,7 +5,7 @@ namespace timelimiter;
 /**
  * Class TimeLimiter
  *
- * A small utility class to help to limit script execution time.
+ * Helps to limit script execution time for time-heavy operations.
  *
  * @package timelimiter
  * @author Morjodrom
@@ -41,22 +41,22 @@ class TimeLimiter implements \Iterator
     /**
      * @var int
      */
-    protected $limitSeconds;
+    protected $maxExecutionTimeSec;
 
 
     /**
      * TimeLimiter constructor.
      *
-     * @param int $maxExecutionTimeSec - seconds to process. 0 equals INF. Can be used with ``ini_get('max_execution_time')``.
-     * @param float $preliminaryTimeoutSec - longest possible duration of an iteration to prevent risk of a shutdown during the last iteration. Value is rounded up
-     * @param int|null $startTimestamp - timestamp of the iteration start. $_SERVER['REQUEST_TIME'] is used by default.
+     * @param int $maxExecutionTimeSec - maximum seconds to execute. 0 defaults INF. Can be used with ``ini_get('max_execution_time')``.
+     * @param float $preliminaryTimeoutSec - longest possible iteration length to prevent a shutdown during the last iteration. The value is rounded up
+     * @param int|null $startTimestamp - timestamp of the iteration start. Defaults to $_SERVER['REQUEST_TIME']
      *
      * @see INF
      */
-    public function __construct(int $maxExecutionTimeSec = 0, float $preliminaryTimeoutSec = self::DEFAULT_TIME_UP_SECONDS, int $startTimestamp = null)
+    public function __construct(int $maxExecutionTimeSec = 0, float $preliminaryTimeoutSec = self::DEFAULT_TIME_UP_SECONDS, int $startTimestamp = 0)
     {
         $this->startTimestamp = $startTimestamp ?: $_SERVER['REQUEST_TIME'];
-        $this->limitSeconds = $maxExecutionTimeSec > 0 ? $maxExecutionTimeSec : INF;
+        $this->maxExecutionTimeSec = $maxExecutionTimeSec > 0 ? $maxExecutionTimeSec : INF;
         $this->setPreliminaryTimeoutSec($preliminaryTimeoutSec);
     }
 
@@ -67,7 +67,7 @@ class TimeLimiter implements \Iterator
      */
     public function current()
     {
-        return $this->startTimestamp + $this->limitSeconds - time();
+        return $this->startTimestamp + $this->maxExecutionTimeSec - time();
     }
 
     /**
