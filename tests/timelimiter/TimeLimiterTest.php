@@ -20,7 +20,6 @@ class TimeLimiterTest extends \PHPUnit\Framework\TestCase
         $preliminaryStopTime = $limit - $safeTime;
 		$timeLimiter = new TimeLimiter($limit, $safeTime, time());
 		$secondsLeft = $timeLimiter->current();
-        $this->assertInternalType('int', $secondsLeft);
 		$this->assertGreaterThanOrEqual($preliminaryStopTime, $secondsLeft, 'There must be time left before the actual timeout');
 	}
 

@@ -23,9 +23,9 @@ class TimeLimiter implements \Iterator
     protected $startTimestamp;
 
     /**
-     * @var int
+     * @var float
      */
-    protected $preliminaryTimeout;
+    protected $iterationMaxDurationS;
 
     /**
      * @var int
@@ -37,15 +37,15 @@ class TimeLimiter implements \Iterator
      * TimeLimiter constructor.
      *
      * @param int $maxExecutionTimeSec - seconds to process. 0 equals to INF. Can be used with ``ini_get('max_execution_time')``.
-     * @param int $iterationMaxDurationS - longest possible duration of an iteration to prevent risk of a shutdown during the last iteration.
+     * @param float $iterationMaxDurationS - longest possible duration of an iteration to prevent risk of a shutdown during the last iteration.
      * @param int|null $startTimestamp - timestamp of the iteration start. $_SERVER['REQUEST_TIME'] is used by default.
      *
      * @see INF
      */
-    public function __construct(int $maxExecutionTimeSec = INF, int $iterationMaxDurationS = self::DEFAULT_TIME_UP_SECONDS, int $startTimestamp = null)
+    public function __construct(int $maxExecutionTimeSec = INF, float $iterationMaxDurationS = self::DEFAULT_TIME_UP_SECONDS, int $startTimestamp = null)
     {
         $this->startTimestamp = $startTimestamp ?: $_SERVER['REQUEST_TIME'];
-        $this->preliminaryTimeout = $iterationMaxDurationS;
+        $this->iterationMaxDurationS = $iterationMaxDurationS;
         $this->limitSeconds = $maxExecutionTimeSec > 0 ? $maxExecutionTimeSec : INF;
     }
 
@@ -57,7 +57,7 @@ class TimeLimiter implements \Iterator
      */
     public function current()
     {
-        return $this->startTimestamp - $this->preliminaryTimeout + $this->limitSeconds - time();
+        return $this->startTimestamp - $this->iterationMaxDurationS + $this->limitSeconds - time();
     }
 
     /**
