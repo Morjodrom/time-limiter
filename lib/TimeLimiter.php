@@ -20,7 +20,7 @@ class TimeLimiter implements \Iterator
     /**
      * @var int - timestamp threshold to stop
      */
-    private $timeout;
+    protected $timeout;
 
 
     /**
@@ -66,6 +66,7 @@ class TimeLimiter implements \Iterator
      */
     public function __construct(int $limitSeconds, int $preliminaryTimeout = self::DEFAULT_TIME_UP_SECONDS, int $startTimestamp = null)
     {
+
         if($limitSeconds === 0) {
             $this->timeout = INF;
         }
