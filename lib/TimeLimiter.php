@@ -36,6 +36,11 @@ class TimeLimiter implements \Iterator
     /**
      * @var int
      */
+    protected $lastExecutionTime;
+
+    /**
+     * @var int
+     */
     protected $limitSeconds;
 
 
@@ -76,7 +81,13 @@ class TimeLimiter implements \Iterator
 
     public function next()
     {
-        // not applicable
+        $iterationDuration = time() - $this->lastExecutionTime;
+        $isRiskyIteration = $iterationDuration > $this->preliminaryTimeoutSec;
+        if ($isRiskyIteration) {
+            $this->setPreliminaryTimeoutSec($iterationDuration);
+        }
+
+        $this->lastExecutionTime = time();
     }
 
     public function key()
@@ -86,6 +97,6 @@ class TimeLimiter implements \Iterator
 
     public function rewind()
     {
-        // must not rewind as limiter should work only for one request
+        $this->lastExecutionTime = time();
     }
 }

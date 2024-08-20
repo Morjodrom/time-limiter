@@ -82,4 +82,25 @@ class TimeLimiterTest extends \PHPUnit\Framework\TestCase
         $this->assertGreaterThan(0, $limiter->current(), 'Limiter must have a safety gap');
     }
 
+
+    public function testAdaptiveLimit()
+    {
+        $longIteration = 3;
+        $shortIteration = 1;
+        $riskyIteration = $longIteration;
+        $iterations = [$shortIteration, $longIteration, $shortIteration, $riskyIteration];
+        $maxExecutionTimeSec = array_sum($iterations);
+
+        $iterationMaxDurationS = $shortIteration;
+
+        $limiter = new TimeLimiter($maxExecutionTimeSec, $iterationMaxDurationS, time());
+        $iterationIndex = 0;
+        foreach ($limiter as $left){
+            sleep($iterations[$iterationIndex] ?: $shortIteration);
+            $iterationIndex++;
+        }
+        $this->assertEquals(count($iterations) - 1, $iterationIndex, 'The last risky operation must be skipped');
+        $this->assertGreaterThan(0, $limiter->current(), 'Must not exceed on variable duration');
+    }
+
 }
