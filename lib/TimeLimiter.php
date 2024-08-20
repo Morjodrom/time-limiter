@@ -10,7 +10,7 @@ namespace timelimiter;
  * @package timelimiter
  * @author Morjodrom
  */
-class TimeLimiter
+class TimeLimiter implements \Iterator
 {
     /**
      * An opinionated amount of seconds to stop execution safely
@@ -97,5 +97,20 @@ class TimeLimiter
     public function valid(): bool
     {
         return $this->current() > 0;
+    }
+
+    public function next()
+    {
+        // not applicable
+    }
+
+    public function key()
+    {
+        return time();
+    }
+
+    public function rewind()
+    {
+        // must not rewind as limiter should work only for one request
     }
 }
