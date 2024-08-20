@@ -48,7 +48,7 @@ class TimeLimiterTest extends \PHPUnit\Framework\TestCase
 	    $limitlessExecutionTimeParam = 0;
 		$timeLimiter = new TimeLimiter($limitlessExecutionTimeParam);
 		$this->assertTrue($timeLimiter->valid());
-		$this->assertSame(INF, $timeLimiter->current(), '');
+		$this->assertSame(INF, $timeLimiter->current(), 'The execution must be infinite');
 	}
 
     public function testIteration() {
@@ -65,6 +65,21 @@ class TimeLimiterTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($limiter->valid(), 'Limiter must be invalid after iteration');
         $limiter->rewind();
         $this->assertFalse($limiter->valid(), 'Limiter invalid state must persist');
+    }
+
+    public function testIterationOnBoundaryValues()
+    {
+        $maxExecutionTimeSec = 2;
+        $longestIteration = 1;
+        $limiter = new TimeLimiter($maxExecutionTimeSec, $longestIteration, time());
+        $count = 0;
+        foreach ($limiter as $left){
+            sleep($longestIteration);
+            $count++;
+        }
+
+        $this->assertGreaterThan(0, $count, 'Limiter must iterate at least once');
+        $this->assertGreaterThan(0, $limiter->current(), 'Limiter must have a safety gap');
     }
 
 }
