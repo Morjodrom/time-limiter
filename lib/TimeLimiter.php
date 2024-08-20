@@ -42,7 +42,7 @@ class TimeLimiter implements \Iterator
     /**
      * @var int
      */
-    protected $lastExecutionTime;
+    protected $lastExecutionTime = 0;
 
     /**
      * @var int
