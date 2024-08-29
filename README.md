@@ -4,7 +4,7 @@ A small utility class to help to limit script execution time.
 # Basic usage
 The class is usually used within loops with heavy time consumption.
 
-``` injectablephp
+```php
 // maximum time to execute one request
 $REQUEST_TIMEOUT_SEC = 5; 
 
@@ -38,7 +38,7 @@ As a production dependency using [Composer](https://getcomposer.org/):
 
     composer require morjodrom/time-limiter
 
-If you only need this class during development, you should add it as a dev-dependency:
+As a dev-dependency for deveopment-only cases:
 
     composer require --dev morjodrom/time-limiter
 
@@ -56,7 +56,7 @@ The class tracks the time spend on each iteration to update $preliminaryTimeout 
 * ``[int|null $startTimestamp = $_SERVER['REQUEST_TIME']`` is used by default. Must be a timestamp
 since Unix Epoch (January 1 1970 00:00:00 GMT), e.g. ``time()`` call.
 
-It is highly encouraged to use ``foreach`` construction, though raw Iteration via while also is 
+It is highly encouraged to use ``foreach`` construction. Raw ``while`` iteration also is 
 possible with correct Iterator calls
 # Methods
 ``current(): int`` - returns number of seconds left before the timeout 
